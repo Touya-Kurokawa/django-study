@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # Create your views here.
 
 def index(request):
@@ -8,13 +8,17 @@ def index(request):
         {"title": "SSR理解できた"},
     ]
 
-    user_message = ""
-    bot_message = ""
-
     if request.method == "POST":
-        user_message = request.POST.get("message","") .strip()
-
+        user_message = request.POST.get("message", "") .strip()
         bot_message = f"受け取ったよ : {user_message}"
+
+        request.session["user_message"] = user_message
+        request.session["bot_message"] = bot_message
+        
+        return redirect("posts:index")
+
+    user_message = request.session.pop("user_message", "")
+    bot_message = request.session.pop("bot_message", "")
 
     return render(request, "posts/index.html",{
         "title": "Posts",
