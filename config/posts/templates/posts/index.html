@@ -1,32 +1,48 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>Posts</title>
-</head>
-<body>
-    <h1>{{ title }}</h1>
-    <p>{{ message }}</p>
+    <head>
+        <meta charset="UTF-8">
+        <title>Posts</title>
+    </head>
+    <body>
+        <h1>{{ title }}</h1>
+        <p>{{ message }}</p>
 
-    <ul>
-        {% for post in posts %}
-            <li>{{ post.title }}</li>
-        {% endfor %}
-    </ul>
+        <ul>
+            {% for post in posts %}
+                <li>{{ post.title }}</li>
+            {% endfor %}
+        </ul>
 
-    <hr>
+        <hr>
 
-    <h2>チャット</h2>
+        <h2>チャット</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="message" placeholder="メッセージを入力" />
-        <button type="submit">送信</button>
-    </form> 
-    
-    {% if user_message %}
-        <p>あなた : {{ user_message }}</p>
-        <p>ボット : {{ bot_message }}</p>
-    {% endif %}
-</body>
+        <form id ="chat-form">
+            <input type="text" id="message" placeholder="メッセージを入力" />
+            <button type="submit">送信</button>
+        </form>
+
+        <p id ="chat-log"></p>
+
+        
+    </body>
+    <script>
+        document.getElementById("chat-form").addEventListener("submit" , async function(e) {
+            e.preventDefault();
+
+            const message = document.getElementById("message").value;
+
+            const response = await fetch("/api/chat/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+          });
+
+            const data = await response.json();
+            document.getElementById("chat-log").innerText = "ボット : " + data.reply;
+        });
+    </script>
 </html>

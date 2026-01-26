@@ -1,5 +1,25 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
+
+@csrf_exempt
+def chat_api(request):
+    if request.method == "POST":
+        if request.method == "POST":
+            data = json.loads(request.body)
+            message = data.get('message', '')
+
+            replay = f"APIで受け取ったよ : {message}"
+
+            return JsonResponse({
+                "reply": replay
+            }, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({
+            "error": "POST only"
+        }, status=405)
 
 def index(request):
     posts = [
